@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Collections.Specialized;
 
 namespace CoalFileManagerWinForms
 {
@@ -113,6 +114,7 @@ namespace CoalFileManagerWinForms
                 tmp.SubItems.Add("");
                 tmp.SubItems.Add("<Папка>");
                 tmp.SubItems.Add(dir.CreationTime.ToShortDateString());
+                tmp.ImageIndex = 0;
                 listView.Items.Add(tmp);
             }
             foreach (var file in directory.GetFiles())
@@ -121,6 +123,7 @@ namespace CoalFileManagerWinForms
                 tmp.SubItems.Add(file.Extension);
                 tmp.SubItems.Add(file.Length/1000 + " Кб");
                 tmp.SubItems.Add(file.CreationTime.ToShortDateString());
+                tmp.ImageIndex = 1;
                 listView.Items.Add(tmp);
             }
         }
@@ -134,9 +137,7 @@ namespace CoalFileManagerWinForms
                 Update(listView1, _left);
             }
             else
-            {
                 MessageBox.Show("Drive is not ready.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
@@ -148,9 +149,7 @@ namespace CoalFileManagerWinForms
                 Update(listView2, _right);
             }
             else
-            {
                 MessageBox.Show("Drive is not ready.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         private void toolStripView1Button_Click(object sender, EventArgs e)
@@ -206,6 +205,47 @@ namespace CoalFileManagerWinForms
         {
             Update(listView1, _left);
             Update(listView2, _right);
+        }
+
+        private void listView1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if(e.Button == MouseButtons.Right)
+            {
+                contextMenuStrip1.Show(MousePosition.X, MousePosition.Y);
+            }
+        }
+
+        private void listView2_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                contextMenuStrip1.Show(MousePosition.X, MousePosition.Y);
+            }
+        }
+
+        private void коопироватьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            StringCollection paths = new StringCollection();
+            foreach(ListViewItem item in listView1.SelectedItems)
+            {
+                paths.Add(label1.Text + "\\" + item.Text);
+            }
+            Clipboard.SetFileDropList(paths);
+        }
+
+        private void вставитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void вырезатьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

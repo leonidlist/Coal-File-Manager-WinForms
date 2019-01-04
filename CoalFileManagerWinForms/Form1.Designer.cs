@@ -46,10 +46,15 @@
             this.label1 = new System.Windows.Forms.Label();
             this.listView1 = new System.Windows.Forms.ListView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.listView2 = new System.Windows.Forms.ListView();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.largeImageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.smallImageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripRefreshButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripView1Button = new System.Windows.Forms.ToolStripButton();
             this.toolStripView2Button = new System.Windows.Forms.ToolStripButton();
@@ -62,14 +67,17 @@
             this.toolStripBackButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripForwardButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSearchButton = new System.Windows.Forms.ToolStripButton();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.коопироватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.вырезатьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.вставитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -188,18 +196,23 @@
             // 
             // listView1
             // 
+            this.listView1.AllowDrop = true;
             this.listView1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.listView1.FullRowSelect = true;
+            this.listView1.LargeImageList = this.largeImageList1;
             this.listView1.Location = new System.Drawing.Point(0, 30);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(528, 576);
+            this.listView1.Size = new System.Drawing.Size(528, 624);
+            this.listView1.SmallImageList = this.smallImageList1;
             this.listView1.TabIndex = 4;
             this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.List;
+            this.listView1.View = System.Windows.Forms.View.Details;
             this.listView1.DoubleClick += new System.EventHandler(this.listView1_DoubleClick);
+            this.listView1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseClick);
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 49);
             this.splitContainer1.Name = "splitContainer1";
             // 
@@ -220,20 +233,41 @@
             this.splitContainer1.Panel2.Controls.Add(this.comboBox2);
             this.splitContainer1.Panel2.Controls.Add(this.label2);
             this.splitContainer1.Panel2MinSize = 200;
-            this.splitContainer1.Size = new System.Drawing.Size(1075, 606);
+            this.splitContainer1.Size = new System.Drawing.Size(1075, 654);
             this.splitContainer1.SplitterDistance = 528;
             this.splitContainer1.TabIndex = 5;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(289, 6);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(35, 13);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "label3";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(281, 6);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 13);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "label4";
             // 
             // listView2
             // 
             this.listView2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.listView2.LargeImageList = this.largeImageList1;
             this.listView2.Location = new System.Drawing.Point(0, 30);
             this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(543, 576);
+            this.listView2.Size = new System.Drawing.Size(543, 624);
+            this.listView2.SmallImageList = this.smallImageList1;
             this.listView2.TabIndex = 7;
             this.listView2.UseCompatibleStateImageBehavior = false;
-            this.listView2.View = System.Windows.Forms.View.List;
+            this.listView2.View = System.Windows.Forms.View.Details;
             this.listView2.DoubleClick += new System.EventHandler(this.listView2_DoubleClick);
+            this.listView2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listView2_MouseClick);
             // 
             // comboBox2
             // 
@@ -260,6 +294,30 @@
             this.notifyIcon1.Text = "notifyIcon1";
             this.notifyIcon1.Visible = true;
             // 
+            // largeImageList1
+            // 
+            this.largeImageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("largeImageList1.ImageStream")));
+            this.largeImageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.largeImageList1.Images.SetKeyName(0, "folder.png");
+            this.largeImageList1.Images.SetKeyName(1, "file.png");
+            // 
+            // smallImageList1
+            // 
+            this.smallImageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("smallImageList1.ImageStream")));
+            this.smallImageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.smallImageList1.Images.SetKeyName(0, "folder.png");
+            this.smallImageList1.Images.SetKeyName(1, "file.png");
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.коопироватьToolStripMenuItem,
+            this.вырезатьToolStripMenuItem,
+            this.вставитьToolStripMenuItem,
+            this.toolStripMenuItem1});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 114);
+            // 
             // toolStripRefreshButton
             // 
             this.toolStripRefreshButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -273,12 +331,15 @@
             // 
             // toolStripView1Button
             // 
+            this.toolStripView1Button.Checked = true;
+            this.toolStripView1Button.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolStripView1Button.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripView1Button.Image = global::CoalFileManagerWinForms.Resource1.detailsView;
             this.toolStripView1Button.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripView1Button.Name = "toolStripView1Button";
             this.toolStripView1Button.Size = new System.Drawing.Size(23, 22);
             this.toolStripView1Button.Text = "toolStripButton2";
+            this.toolStripView1Button.ToolTipText = "Режим: подробно";
             this.toolStripView1Button.Click += new System.EventHandler(this.toolStripView1Button_Click);
             // 
             // toolStripView2Button
@@ -288,7 +349,7 @@
             this.toolStripView2Button.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripView2Button.Name = "toolStripView2Button";
             this.toolStripView2Button.Size = new System.Drawing.Size(23, 22);
-            this.toolStripView2Button.Text = "toolStripButton3";
+            this.toolStripView2Button.Text = "Режим: эскиз";
             this.toolStripView2Button.Click += new System.EventHandler(this.toolStripView2Button_Click);
             // 
             // toolStripView3Button
@@ -298,7 +359,7 @@
             this.toolStripView3Button.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripView3Button.Name = "toolStripView3Button";
             this.toolStripView3Button.Size = new System.Drawing.Size(23, 22);
-            this.toolStripView3Button.Text = "toolStripButton4";
+            this.toolStripView3Button.Text = "Режим: список";
             this.toolStripView3Button.Click += new System.EventHandler(this.toolStripView3Button_Click);
             // 
             // toolStripView4Button
@@ -308,7 +369,7 @@
             this.toolStripView4Button.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripView4Button.Name = "toolStripView4Button";
             this.toolStripView4Button.Size = new System.Drawing.Size(23, 22);
-            this.toolStripView4Button.Text = "toolStripButton5";
+            this.toolStripView4Button.ToolTipText = "Режим: маленькие эскизы";
             this.toolStripView4Button.Click += new System.EventHandler(this.toolStripView4Button_Click);
             // 
             // toolStripView5Button
@@ -319,6 +380,7 @@
             this.toolStripView5Button.Name = "toolStripView5Button";
             this.toolStripView5Button.Size = new System.Drawing.Size(23, 22);
             this.toolStripView5Button.Text = "toolStripButton6";
+            this.toolStripView5Button.ToolTipText = "Режим: сетка";
             this.toolStripView5Button.Click += new System.EventHandler(this.toolStripView5Button_Click);
             // 
             // toolStripInvertSelectionButton
@@ -380,23 +442,37 @@
             this.toolStripSearchButton.Text = "toolStripButton12";
             this.toolStripSearchButton.ToolTipText = "Поиск";
             // 
-            // label3
+            // коопироватьToolStripMenuItem
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(289, 6);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(35, 13);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "label3";
+            this.коопироватьToolStripMenuItem.Image = global::CoalFileManagerWinForms.Resource1.copy;
+            this.коопироватьToolStripMenuItem.Name = "коопироватьToolStripMenuItem";
+            this.коопироватьToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.коопироватьToolStripMenuItem.Text = "Копировать";
+            this.коопироватьToolStripMenuItem.Click += new System.EventHandler(this.коопироватьToolStripMenuItem_Click);
             // 
-            // label4
+            // вырезатьToolStripMenuItem
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(281, 6);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 13);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "label4";
+            this.вырезатьToolStripMenuItem.Image = global::CoalFileManagerWinForms.Resource1.cut;
+            this.вырезатьToolStripMenuItem.Name = "вырезатьToolStripMenuItem";
+            this.вырезатьToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.вырезатьToolStripMenuItem.Text = "Вырезать";
+            this.вырезатьToolStripMenuItem.Click += new System.EventHandler(this.вырезатьToolStripMenuItem_Click);
+            // 
+            // вставитьToolStripMenuItem
+            // 
+            this.вставитьToolStripMenuItem.Image = global::CoalFileManagerWinForms.Resource1.paste;
+            this.вставитьToolStripMenuItem.Name = "вставитьToolStripMenuItem";
+            this.вставитьToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.вставитьToolStripMenuItem.Text = "Вставить";
+            this.вставитьToolStripMenuItem.Click += new System.EventHandler(this.вставитьToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Image = global::CoalFileManagerWinForms.Resource1.delete;
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem1.Text = "Удалить";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
             // 
             // Form1
             // 
@@ -420,6 +496,7 @@
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -461,6 +538,13 @@
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ImageList largeImageList1;
+        private System.Windows.Forms.ImageList smallImageList1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem коопироватьToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem вырезатьToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem вставитьToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
     }
 }
 
