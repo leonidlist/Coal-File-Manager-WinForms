@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -16,7 +17,8 @@ namespace CoalFileManagerWinForms
     {
         private DriveInfo[] _drives;
         private DirectoryInfo _left;
-        private DirectoryInfo _right;               
+        private DirectoryInfo _right;
+        private ListView _active;
 
         public Form1()
         {
@@ -34,7 +36,7 @@ namespace CoalFileManagerWinForms
                 _left = _left.Parent ?? _left;
                 Update(listView1, _left);
             }
-            else if(Directory.Exists(_left.FullName + "\\" + listView1.SelectedItems[0].Text))
+            else if(Directory.Exists(_left.FullName + "\\" + listView1.FocusedItem.Text))
             {
                 _left = new DirectoryInfo(_left.FullName + "\\" + listView1.SelectedItems[0].Text);
                 Update(listView1, _left);
@@ -48,7 +50,7 @@ namespace CoalFileManagerWinForms
                 _right = _right.Parent ?? _right;
                 Update(listView2, _right);
             }
-            else if (Directory.Exists(_left.FullName + "\\" + listView2.SelectedItems[0].Text))
+            else if (Directory.Exists(_right.FullName + "\\" + listView2.FocusedItem.Text))
             {
                 _right = new DirectoryInfo(_right.FullName + "\\" + listView2.SelectedItems[0].Text);
                 Update(listView2, _right);
@@ -137,7 +139,10 @@ namespace CoalFileManagerWinForms
                 Update(listView1, _left);
             }
             else
+            {
+                comboBox1.SelectedIndex = 0;
                 MessageBox.Show("Drive is not ready.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
@@ -149,7 +154,10 @@ namespace CoalFileManagerWinForms
                 Update(listView2, _right);
             }
             else
+            {
+                comboBox1.SelectedIndex = 0;
                 MessageBox.Show("Drive is not ready.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void toolStripView1Button_Click(object sender, EventArgs e)
@@ -203,20 +211,36 @@ namespace CoalFileManagerWinForms
 
         private void toolStripRefreshButton_Click(object sender, EventArgs e)
         {
-            Update(listView1, _left);
-            Update(listView2, _right);
+            Update(_active, _active==listView1?_left:_right);
         }
 
         private void listView1_MouseClick(object sender, MouseEventArgs e)
         {
+            _active = listView1;
             if(e.Button == MouseButtons.Right)
             {
                 contextMenuStrip1.Show(MousePosition.X, MousePosition.Y);
             }
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if(keyData == (Keys.Control | Keys.C))
+            {
+                Copy(_active);
+                return true;
+            }
+            else if(keyData == (Keys.Control | Keys.V))
+            {
+                Paste(_active);
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
         private void listView2_MouseClick(object sender, MouseEventArgs e)
         {
+            _active = listView2;
             if (e.Button == MouseButtons.Right)
             {
                 contextMenuStrip1.Show(MousePosition.X, MousePosition.Y);
@@ -225,27 +249,84 @@ namespace CoalFileManagerWinForms
 
         private void коопироватьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            StringCollection paths = new StringCollection();
-            foreach(ListViewItem item in listView1.SelectedItems)
-            {
-                paths.Add(label1.Text + "\\" + item.Text);
-            }
-            Clipboard.SetFileDropList(paths);
+            Copy(_active);  
         }
 
         private void вставитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+            Paste(_active);
         }
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-
+            Label tmp = _active == listView1 ? label1 : label2;
+            foreach(ListViewItem item in _active.SelectedItems)
+            {
+                if (File.Exists(tmp.Text + "\\" + item.Text))
+                    File.Delete(tmp.Text + "\\" + item.Text);
+                else if (Directory.Exists(tmp.Text + "\\" + item.Text))
+                    Directory.Delete(tmp.Text + "\\" + item.Text, true);  
+            }
+            Update(_active, _active == listView1 ? _left : _right);
         }
 
-        private void вырезатьToolStripMenuItem_Click(object sender, EventArgs e)
+        private void Copy(ListView listView)
         {
+            StringCollection paths = new StringCollection();
+            foreach (ListViewItem item in listView.SelectedItems)
+            {
+                paths.Add((listView == listView1 ? label1 : label2).Text + "\\" + item.Text);
+            }
+            Clipboard.SetFileDropList(paths);
+        }
 
+        private void Paste(ListView listView)
+        {
+            DirectoryInfo tmp = new DirectoryInfo((_active == listView1 ? label1 : label2).Text + "\\" + _active.FocusedItem.Text);
+            if (tmp.Exists)
+            {
+                foreach (var item in Clipboard.GetFileDropList())
+                {
+                    FileInfo file = new FileInfo(item);
+                    if (file.Exists)
+                    {
+                        File.Copy(item, tmp.FullName + "\\" + file.Name);
+                    }
+
+                    DirectoryInfo dir = new DirectoryInfo(item);
+                    if (dir.Exists)
+                    {
+                        DirectoryInfo to = new DirectoryInfo((_active == listView1 ? label1 : label2).Text + "\\" + _active.FocusedItem.Text);
+                        CopyDirectory(dir, to);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Direcotry not exists.");
+            }
+        }
+        private void CopyDirectory(DirectoryInfo from, DirectoryInfo to)
+        {
+            try
+            {
+                ArrayList contains = new ArrayList();
+                contains.AddRange(from.GetDirectories());
+                contains.AddRange(from.GetFiles());
+                foreach (var item in contains)
+                {
+                    if (item is DirectoryInfo)
+                    {
+                        to.CreateSubdirectory((item as DirectoryInfo).Name);
+                        CopyDirectory(item as DirectoryInfo, to.GetDirectories((item as DirectoryInfo).Name)[0]);
+                    }
+                    else if (item is FileInfo)
+                    {
+                        (item as FileInfo).CopyTo(to.FullName + "\\" + (item as FileInfo).Name);
+                    }
+                }
+            }
+            catch (Exception) { }
         }
     }
 }
