@@ -107,9 +107,7 @@ namespace CoalFileManagerWinForms
             UpdateLabels();
             listView.Items.Clear();
             if(directory.Parent != null)
-            {
                 listView.Items.Add("..");
-            }
             foreach (var dir in directory.GetDirectories())
             {
                 ListViewItem tmp = new ListViewItem(dir.Name);
@@ -218,21 +216,19 @@ namespace CoalFileManagerWinForms
         {
             _active = listView1;
             if(e.Button == MouseButtons.Right)
-            {
                 contextMenuStrip1.Show(MousePosition.X, MousePosition.Y);
-            }
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if(keyData == (Keys.Control | Keys.C))
             {
-                Copy(_active);
+                ContextMenuMethods.Copy(_active, (_active == listView1 ? label1 : label2).Text);
                 return true;
             }
             else if(keyData == (Keys.Control | Keys.V))
             {
-                Paste(_active);
+                ContextMenuMethods.Paste(_active, (_active == listView1 ? label1 : label2).Text + "\\" + _active.FocusedItem.Text);
                 return true;
             }
             return base.ProcessCmdKey(ref msg, keyData);
@@ -242,91 +238,30 @@ namespace CoalFileManagerWinForms
         {
             _active = listView2;
             if (e.Button == MouseButtons.Right)
-            {
                 contextMenuStrip1.Show(MousePosition.X, MousePosition.Y);
-            }
         }
 
         private void коопироватьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Copy(_active);  
+            ContextMenuMethods.Copy(_active, (_active == listView1 ? label1 : label2).Text);
+            Update(_active, _active == listView1 ? _left : _right);
         }
 
         private void вставитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Paste(_active);
+            ContextMenuMethods.Paste(_active, (_active == listView1 ? label1 : label2).Text + "\\" + _active.FocusedItem.Text);
+            Update(_active, _active == listView1 ? _left : _right);
         }
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            Label tmp = _active == listView1 ? label1 : label2;
-            foreach(ListViewItem item in _active.SelectedItems)
+            if(MessageBox.Show($"Вы уверены, что хотите удалить {_active.FocusedItem.Text} ?", "Удаление", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                if (File.Exists(tmp.Text + "\\" + item.Text))
-                    File.Delete(tmp.Text + "\\" + item.Text);
-                else if (Directory.Exists(tmp.Text + "\\" + item.Text))
-                    Directory.Delete(tmp.Text + "\\" + item.Text, true);  
+                Point mem = _active.AutoScrollOffset;
+                ContextMenuMethods.Delete(_active, (_active == listView1 ? label1 : label2).Text);
+                Update(_active, _active == listView1 ? _left : _right);
+                _active.AutoScrollOffset = mem;
             }
-            Update(_active, _active == listView1 ? _left : _right);
-        }
-
-        private void Copy(ListView listView)
-        {
-            StringCollection paths = new StringCollection();
-            foreach (ListViewItem item in listView.SelectedItems)
-            {
-                paths.Add((listView == listView1 ? label1 : label2).Text + "\\" + item.Text);
-            }
-            Clipboard.SetFileDropList(paths);
-        }
-
-        private void Paste(ListView listView)
-        {
-            DirectoryInfo tmp = new DirectoryInfo((_active == listView1 ? label1 : label2).Text + "\\" + _active.FocusedItem.Text);
-            if (tmp.Exists)
-            {
-                foreach (var item in Clipboard.GetFileDropList())
-                {
-                    FileInfo file = new FileInfo(item);
-                    if (file.Exists)
-                    {
-                        File.Copy(item, tmp.FullName + "\\" + file.Name);
-                    }
-
-                    DirectoryInfo dir = new DirectoryInfo(item);
-                    if (dir.Exists)
-                    {
-                        DirectoryInfo to = new DirectoryInfo((_active == listView1 ? label1 : label2).Text + "\\" + _active.FocusedItem.Text);
-                        CopyDirectory(dir, to);
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("Direcotry not exists.");
-            }
-        }
-        private void CopyDirectory(DirectoryInfo from, DirectoryInfo to)
-        {
-            try
-            {
-                ArrayList contains = new ArrayList();
-                contains.AddRange(from.GetDirectories());
-                contains.AddRange(from.GetFiles());
-                foreach (var item in contains)
-                {
-                    if (item is DirectoryInfo)
-                    {
-                        to.CreateSubdirectory((item as DirectoryInfo).Name);
-                        CopyDirectory(item as DirectoryInfo, to.GetDirectories((item as DirectoryInfo).Name)[0]);
-                    }
-                    else if (item is FileInfo)
-                    {
-                        (item as FileInfo).CopyTo(to.FullName + "\\" + (item as FileInfo).Name);
-                    }
-                }
-            }
-            catch (Exception) { }
         }
     }
 }
