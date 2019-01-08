@@ -337,5 +337,40 @@ namespace CoalFileManagerWinForms
                 _propsForm.SetTargetObject(new DirectoryInfo((_active == listView1 ? label1 : label2).Text + "\\" + _active.FocusedItem.Text));
             _propsForm.ShowDialog();
         }
+
+        private void listView1_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            listView1.DoDragDrop(label1.Text + "\\" + listView1.FocusedItem.Text, DragDropEffects.Copy);
+        }
+
+        private void listView2_DragEnter(object sender, DragEventArgs e)
+        {
+            if(e.Data.GetDataPresent(DataFormats.Text))
+                e.Effect = DragDropEffects.Copy;
+            else if(e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.Copy;
+        }
+
+        private void listView2_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = e.Data.GetData(DataFormats.FileDrop) as string[];
+                foreach (var file in files)
+                {
+                    if (File.Exists(file))
+                        File.Copy(file, label2.Text);
+                    else if (Directory.Exists(file))
+                        DirMethods.CopyDirectory(new DirectoryInfo(file), new DirectoryInfo(label2.Text));
+                }
+            }
+            else if (e.Data.GetDataPresent(DataFormats.Text))
+            {
+                if (File.Exists(e.Data.GetData(DataFormats.Text) as string))
+                    File.Copy(e.Data.GetData(DataFormats.Text) as string, label2.Text);
+                else if (Directory.Exists(e.Data.GetData(DataFormats.Text) as string))
+                    DirMethods.CopyDirectory(new DirectoryInfo(e.Data.GetData(DataFormats.Text) as string), new DirectoryInfo(label2.Text));
+            }
+        }
     }
 }
