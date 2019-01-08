@@ -31,5 +31,25 @@ namespace CoalFileManagerWinForms
             }
             catch (Exception) { }
         }
+
+        public static long DirectoryLength(DirectoryInfo dir)
+        {
+            ArrayList contains = new ArrayList();
+            contains.AddRange(dir.GetDirectories());
+            contains.AddRange(dir.GetFiles());
+            long sum = 0;
+            foreach(var d in contains)
+            {
+                if(d is DirectoryInfo)
+                {
+                    sum += DirectoryLength(d as DirectoryInfo);
+                }
+                else if(d is FileInfo)
+                {
+                    sum += (d as FileInfo).Length;
+                }
+            }
+            return sum;
+        }
     }
 }

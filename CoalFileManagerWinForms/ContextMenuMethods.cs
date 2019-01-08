@@ -45,13 +45,16 @@ namespace CoalFileManagerWinForms
 
                     DirectoryInfo dir = new DirectoryInfo(item);
                     if (dir.Exists)
-                    {
                         DirMethods.CopyDirectory(dir, tmp);
-                    }
                 }
             }
             else
                 MessageBox.Show("Direcotry not exists.");
+        }
+
+        public static void CreateFolder(string path)
+        {
+            Directory.CreateDirectory(path);
         }
     }
 }

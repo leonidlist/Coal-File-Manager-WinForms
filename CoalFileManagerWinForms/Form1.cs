@@ -19,11 +19,14 @@ namespace CoalFileManagerWinForms
         private DirectoryInfo _left;
         private DirectoryInfo _right;
         private ListView _active;
+        private PropsForm _propsForm;
+        private object _memory;
 
         public Form1()
         {
             InitializeComponent();
             _drives = DriveInfo.GetDrives();
+            _propsForm = new PropsForm();
             InitTabs();
             InitComboBoxes();
             UpdateLabels();
@@ -257,11 +260,82 @@ namespace CoalFileManagerWinForms
         {
             if(MessageBox.Show($"Вы уверены, что хотите удалить {_active.FocusedItem.Text} ?", "Удаление", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                Point mem = _active.AutoScrollOffset;
                 ContextMenuMethods.Delete(_active, (_active == listView1 ? label1 : label2).Text);
                 Update(_active, _active == listView1 ? _left : _right);
-                _active.AutoScrollOffset = mem;
             }
+        }
+
+        private void папкуToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListViewItem tmp = new ListViewItem("Новая папка", 0);
+            _active.Items.Insert(0, tmp);
+            Directory.CreateDirectory((_active == listView1 ? label1 : label2).Text + "\\" + tmp.Text);
+            _active.Items[0].BeginEdit();
+        }
+
+        private void listView1_AfterLabelEdit(object sender, LabelEditEventArgs e)
+        {
+            try
+            {
+                if (Directory.Exists(label1.Text + "\\" + _memory as string) && listView1.FocusedItem.Text != _memory as string)
+                    Directory.Move(label1.Text + "\\" + (_memory as string), label1.Text + "\\" + listView1.FocusedItem.Text);
+                else if (File.Exists(label1.Text + "\\" + _memory as string) && listView1.FocusedItem.Text != _memory as string)
+                    File.Move(label1.Text + "\\" + (_memory as string), label1.Text + "\\" + listView1.FocusedItem.Text);
+            } catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            } finally
+            {
+                Update(listView1, _left);
+            }
+        }
+
+        private void listView1_BeforeLabelEdit(object sender, LabelEditEventArgs e)
+        {
+            _memory = listView1.FocusedItem.Text;
+        }
+
+        private void переименоватьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _active.FocusedItem.BeginEdit();
+        }
+
+        private void listView2_AfterLabelEdit(object sender, LabelEditEventArgs e)
+        {
+            try
+            {
+                if (Directory.Exists(label2.Text + "\\" + _memory as string) && listView2.FocusedItem.Text != _memory as string)
+                    Directory.Move(label2.Text + "\\" + (_memory as string), label2.Text + "\\" + listView2.FocusedItem.Text);
+                else if (File.Exists(label2.Text + "\\" + _memory as string) && listView2.FocusedItem.Text != _memory as string)
+                    File.Move(label2.Text + "\\" + (_memory as string), label2.Text + "\\" + listView2.FocusedItem.Text);
+            }
+            catch (Exception) { }
+            finally
+            {
+                Update(listView2, _right);
+            }
+        }
+
+        private void listView2_BeforeLabelEdit(object sender, LabelEditEventArgs e)
+        {
+            _memory = listView2.FocusedItem.Text;
+        }
+
+        private void файлToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListViewItem tmp = new ListViewItem("Новый файл", 0);
+            _active.Items.Insert(0, tmp);
+            File.Create((_active == listView1 ? label1 : label2).Text + "\\" + tmp.Text);
+            _active.Items[0].BeginEdit();
+        }
+
+        private void свойстваToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (File.Exists((_active == listView1 ? label1 : label2).Text + "\\" + _active.FocusedItem.Text))
+                _propsForm.SetTargetObject(new FileInfo((_active == listView1 ? label1 : label2).Text + "\\" + _active.FocusedItem.Text));
+            else if (Directory.Exists((_active == listView1 ? label1 : label2).Text + "\\" + _active.FocusedItem.Text))
+                _propsForm.SetTargetObject(new DirectoryInfo((_active == listView1 ? label1 : label2).Text + "\\" + _active.FocusedItem.Text));
+            _propsForm.ShowDialog();
         }
     }
 }

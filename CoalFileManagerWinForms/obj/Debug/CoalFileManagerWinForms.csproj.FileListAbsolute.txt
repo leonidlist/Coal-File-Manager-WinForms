@@ -9,3 +9,4 @@ C:\Users\Leonid\Desktop\Coal-File-Manager-WinForms\CoalFileManagerWinForms\obj\D
 C:\Users\Leonid\Desktop\Coal-File-Manager-WinForms\CoalFileManagerWinForms\obj\Debug\CoalFileManagerWinForms.exe
 C:\Users\Leonid\Desktop\Coal-File-Manager-WinForms\CoalFileManagerWinForms\obj\Debug\CoalFileManagerWinForms.pdb
 C:\Users\Leonid\Desktop\Coal-File-Manager-WinForms\CoalFileManagerWinForms\obj\Debug\CoalFileManagerWinForms.Resource1.resources
+C:\Users\Leonid\Desktop\Coal-File-Manager-WinForms\CoalFileManagerWinForms\obj\Debug\CoalFileManagerWinForms.PropsForm.resources
